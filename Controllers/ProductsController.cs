@@ -1,5 +1,7 @@
 ﻿using enterprise_ecommerce_api.Data;
 using enterprise_ecommerce_api.Models;
+using enterprise_ecommerce_api.Services.Implementaion;
+using enterprise_ecommerce_api.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +12,11 @@ namespace enterprise_ecommerce_api.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly AppDbContext dbContext;
+        private readonly IProductService _productService;
 
-        public ProductsController(AppDbContext dbContext)
+        public ProductsController(IProductService productService)
         {
-            this.dbContext = dbContext;
+            _productService = productService;
         }
 
         // GET: api/Products
@@ -22,7 +24,7 @@ namespace enterprise_ecommerce_api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
-            var products = await dbContext.Products.ToListAsync();
+            var products = await _productService.GetAllAsync();
             return Ok(products);
         }
 
@@ -34,10 +36,12 @@ namespace enterprise_ecommerce_api.Controllers
             {
                 return BadRequest();
             }
+           
+            var createdProduct = await _productService.CreateAsync(product);
+            return createdProduct != null ? CreatedAtAction(nameof(GetProduct), new { id = createdProduct.Id }, createdProduct) : BadRequest();
+        
 
-            dbContext.Products.Add(product);
-            await dbContext.SaveChangesAsync();
-            return Ok(product);
+
         }
         // PUT: api/Products/{id}
         [HttpPut("{id}")]
@@ -47,44 +51,37 @@ namespace enterprise_ecommerce_api.Controllers
             {
                 return BadRequest();
             }
-            var existingProduct = await dbContext.Products.FindAsync(id);
-            if (existingProduct == null)
+
+            var updatedProduct = await _productService.UpdateAsync(id, request);
+            if (updatedProduct == null)
             {
                 return NotFound();
             }
+            return Ok(updatedProduct);
 
-            existingProduct.Name = request.Name;
-            existingProduct.Description = request.Description;
-            existingProduct.Price = request.Price;
-            existingProduct.Stock = request.Stock;
 
-            await dbContext.SaveChangesAsync();
-            return Ok(existingProduct);
+
+
+
         }
 
         // DELETE: api/Products/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            var existingProduct = await dbContext.Products.FindAsync(id);
-            if (existingProduct == null)
+            var deleted = await _productService.DeleteAsync(id);
+            if (!deleted)
             {
                 return NotFound();
             }
-            dbContext.Products.Remove(existingProduct);
-            await dbContext.SaveChangesAsync();
-            return NoContent();
+            return Ok(deleted);
         }
 
         // GET: api/Products/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {
-            var product = await dbContext.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            var product = await _productService.GetByIdAsync(id);
             return Ok(product);
         }
     }
