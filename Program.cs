@@ -1,4 +1,6 @@
 
+using enterprise_ecommerce_api.Repositories.Implementation;
+using enterprise_ecommerce_api.Repositories.Interfaces;
 using enterprise_ecommerce_api.Services.Implementaion;
 using enterprise_ecommerce_api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +21,7 @@ namespace enterprise_ecommerce_api
             builder.Services.AddDbContext<Data.AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IProductRepository , ProductRepository>();
 
             var app = builder.Build();
 
