@@ -16,4 +16,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\enterprise-ecommerce.Application\ClassLibrary1\enterprise-ecommerce.Application.csproj" />
+    <ProjectReference Include="..\enterprise-ecommerce.Infrastructure\enterprise-ecommerce.Infrastructure\enterprise-ecommerce.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

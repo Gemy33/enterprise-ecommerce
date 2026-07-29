@@ -1,8 +1,9 @@
 
-using enterprise_ecommerce_api.Repositories.Implementation;
-using enterprise_ecommerce_api.Repositories.Interfaces;
-using enterprise_ecommerce_api.Services.Implementaion;
-using enterprise_ecommerce_api.Services.Interfaces;
+using enterprise_ecommerce.Infrastructure.Persistence;
+using enterprise_ecommerce.Infrastructure.Repositories;
+using enterpriseecommerce.Application.Interfaces.Persistence;
+using enterpriseecommerce.Application.Interfaces.Services;
+using enterpriseecommerce.Application.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace enterprise_ecommerce_api
@@ -18,7 +19,7 @@ namespace enterprise_ecommerce_api
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
-            builder.Services.AddDbContext<Data.AppDbContext>(options =>
+            builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IProductRepository , ProductRepository>();

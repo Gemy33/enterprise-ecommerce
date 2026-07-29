@@ -1,7 +1,6 @@
-﻿using enterprise_ecommerce_api.Data;
-using enterprise_ecommerce_api.Models;
-using enterprise_ecommerce_api.Services.Implementaion;
-using enterprise_ecommerce_api.Services.Interfaces;
+﻿
+using enterprise_ecommerce.Domain.Entities;
+using enterpriseecommerce.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
