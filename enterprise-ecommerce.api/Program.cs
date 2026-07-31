@@ -22,8 +22,9 @@ namespace enterprise_ecommerce_api
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<IProductRepository , ProductRepository>();
-            builder.Services.AddScoped<CreateProductHandler>();
-            builder.Services.AddScoped<GetAllProductsHandler>();
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateProductHandler).Assembly));
+            //builder.Services.AddScoped<CreateProductHandler>();
+            //builder.Services.AddScoped<GetAllProductsHandler>();
 
             var app = builder.Build();
 

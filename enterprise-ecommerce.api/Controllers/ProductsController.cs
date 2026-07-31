@@ -2,6 +2,7 @@
 using enterprise_ecommerce.Domain.Entities;
 using enterpriseecommerce.Application.Features.Products.Commands.CreateProduct;
 using enterpriseecommerce.Application.Features.Products.Queries.GetAllProducts;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,13 +13,11 @@ namespace enterprise_ecommerce_api.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly CreateProductHandler productHandler;
-        private readonly GetAllProductsHandler productsHandler;
+        private readonly IMediator _mediator;
 
-        public ProductsController(CreateProductHandler productHandler , GetAllProductsHandler productsHandler)
+        public ProductsController(IMediator mediator)
         {
-            this.productHandler = productHandler;
-            this.productsHandler = productsHandler;
+            this._mediator = mediator;
         }
 
         // GET: api/Products
@@ -26,7 +25,8 @@ namespace enterprise_ecommerce_api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
-            return Ok(await productsHandler.Handle());
+            var products = await _mediator.Send(new GetAllProductsQuery());
+            return Ok(products);
         }
 
         // POST: api/Products
@@ -34,7 +34,7 @@ namespace enterprise_ecommerce_api.Controllers
         public async Task<IActionResult> CreateProduct(CreateProductCommand command)
         {
    
-            var productId = await  productHandler.Handle(command);
+            var productId = await _mediator.Send(command);
             return Ok(productId);
 
         }
