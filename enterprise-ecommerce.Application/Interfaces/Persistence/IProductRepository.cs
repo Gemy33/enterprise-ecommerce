@@ -11,7 +11,7 @@ namespace enterpriseecommerce.Application.Interfaces.Persistence
     {
         Task<Product> AddAsync(Product product);
 
-        Task<List<Product>> GetAllAsync();
+        Task<List<Product>> GetAllAsync(Func<Product, bool>? predicate = null);
 
         Task<Product?> GetByIdAsync(int id);
 

@@ -32,9 +32,16 @@ namespace enterprise_ecommerce.Infrastructure.Repositories
 
         }
 
-        public Task<List<Product>> GetAllAsync()
+        public Task<List<Product>> GetAllAsync(Func<Product, bool>? predicate = null)
         {
-            return _db.Products.ToListAsync();
+            if (predicate == null)
+            {
+                return _db.Products.ToListAsync();
+            }
+            else
+            {
+                return Task.FromResult(_db.Products.Where(predicate).ToList());
+            }
         }
 
         public async Task<Product?> GetByIdAsync(int id)

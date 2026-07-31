@@ -1,7 +1,10 @@
 ﻿
 using enterprise_ecommerce.Domain.Entities;
 using enterpriseecommerce.Application.Features.Products.Commands.CreateProduct;
+using enterpriseecommerce.Application.Features.Products.Commands.DeleteProduct;
+using enterpriseecommerce.Application.Features.Products.Commands.UpdateProduct;
 using enterpriseecommerce.Application.Features.Products.Queries.GetAllProducts;
+using enterpriseecommerce.Application.Features.Products.Queries.GetProductById;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -33,51 +36,61 @@ namespace enterprise_ecommerce_api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProduct(CreateProductCommand command)
         {
-   
+
             var productId = await _mediator.Send(command);
             return Ok(productId);
 
         }
-        //// PUT: api/Products/{id}
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> UpdateProduct(int id, Product request)
-        //{
-        //    if (id != request.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    var updatedProduct = await _productService.UpdateAsync(id, request);
-        //    if (updatedProduct == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return Ok(updatedProduct);
-
-
-
+        // PUT: api/Products/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, UpdateProductCommand updateProduct)
+        {
+           var command = new UpdateProductCommand
+            {
+                ProductId = id,
+                ProductName = updateProduct.ProductName,
+                ProductDescription = updateProduct.ProductDescription,
+                ProductPrice = updateProduct.ProductPrice,
+                ProductQuantity = updateProduct.ProductQuantity
+            };
+            
+                await _mediator.Send(command);
+                return NoContent();
+           
 
 
-        //}
 
-        //// DELETE: api/Products/{id}
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteProduct(int id)
-        //{
-        //    var deleted = await _productService.DeleteAsync(id);
-        //    if (!deleted)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return Ok(deleted);
-        //}
+        }
 
-        //// GET: api/Products/{id}
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetProduct(int id)
-        //{
-        //    var product = await _productService.GetByIdAsync(id);
-        //    return Ok(product);
-        //}
+        // DELETE: api/Products/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            try
+            {
+                await _mediator.Send(new DeleteProductCommand(id));
+                return NoContent();
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error deleting product: {ex.Message}");
+            }
+        }
+
+        //GET: api/Products/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProduct(int id)
+        {
+            try
+            {
+                var porduct = await _mediator.Send(new GetProductByIdQuery(id));
+                return Ok(porduct);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error retrieving product: {ex.Message}");
+            }
+        }
     }
 }
