@@ -1,9 +1,9 @@
 
 using enterprise_ecommerce.Infrastructure.Persistence;
 using enterprise_ecommerce.Infrastructure.Repositories;
+using enterpriseecommerce.Application.Features.Products.Commands.CreateProduct;
+using enterpriseecommerce.Application.Features.Products.Queries.GetAllProducts;
 using enterpriseecommerce.Application.Interfaces.Persistence;
-using enterpriseecommerce.Application.Interfaces.Services;
-using enterpriseecommerce.Application.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace enterprise_ecommerce_api
@@ -21,8 +21,9 @@ namespace enterprise_ecommerce_api
             builder.Services.AddOpenApi();
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IProductRepository , ProductRepository>();
+            builder.Services.AddScoped<CreateProductHandler>();
+            builder.Services.AddScoped<GetAllProductsHandler>();
 
             var app = builder.Build();
 
